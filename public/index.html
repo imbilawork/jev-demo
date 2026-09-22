@@ -88,14 +88,14 @@
   .bars { display: flex; flex-direction: column; gap: 4px; margin-top: 6px; }
   .bar { display: grid; grid-template-columns: 110px 1fr 44px; align-items: center; gap: 8px; font-size: 12px; }
   .bar .lbl { color: var(--ink-2); font-family: var(--mono); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .bar .trk { height: 10px; background: var(--surface-3); border-radius: 2px; position: relative; }
-  .bar .fil { height: 100%; background: var(--accent-soft); border-radius: 0 4px 4px 0; min-width: 2px; }
+  .bar .trk { display: block; height: 10px; background: var(--surface-3); border-radius: 2px; position: relative; }
+  .bar .fil { display: block; height: 100%; background: var(--accent-soft); border-radius: 0 4px 4px 0; min-width: 2px; }
   .bar.win .fil { background: var(--accent); }
   .bar .val { text-align: right; color: var(--ink-2); font-variant-numeric: tabular-nums; }
   .bar.win .val, .bar.win .lbl { color: var(--ink); font-weight: 600; }
   .noul .trk { height: 12px; }
-  .noul .tick { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--ink-3); left: 50%; }
-  .score .mark { position: absolute; top: -4px; width: 3px; height: 18px; background: var(--ink); border-radius: 2px; margin-left: -1px; }
+  .noul .tick { display: block; position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--ink-3); left: 50%; }
+  .score .mark { display: block; position: absolute; top: -4px; width: 3px; height: 18px; background: var(--ink); border-radius: 2px; margin-left: -1px; }
   .act { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
   .status { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; padding: 4px 10px; border-radius: 6px; background: var(--surface); border: 1px solid var(--line); font-family: var(--mono); font-size: 13px; }
   .status .sw { width: 10px; height: 10px; border-radius: 2px; }
@@ -119,8 +119,8 @@
   .calc input { width: 100%; font: 14px var(--mono); padding: 6px 8px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
   .cbars { margin-top: 14px; display: flex; flex-direction: column; gap: 8px; }
   .cbar { display: grid; grid-template-columns: 200px 1fr 90px; align-items: center; gap: 10px; font-size: 13px; }
-  .cbar .trk { height: 14px; background: var(--surface-3); border-radius: 2px; }
-  .cbar .fil { height: 100%; background: var(--accent); border-radius: 0 4px 4px 0; min-width: 2px; }
+  .cbar .trk { display: block; height: 14px; background: var(--surface-3); border-radius: 2px; }
+  .cbar .fil { display: block; height: 100%; background: var(--accent); border-radius: 0 4px 4px 0; min-width: 2px; }
   .cbar.alt .fil { background: var(--accent-soft); }
   .cbar .val { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
   .cbar .lbl { color: var(--ink-2); }
@@ -196,9 +196,9 @@
         <div class="calc">
           <div><label for="c-vol">Decisions per month</label><input id="c-vol" type="number" value="1000000" min="0" step="10000"></div>
           <div><label for="c-tok">Avg input tokens per decision</label><input id="c-tok" type="number" value="400" min="1"></div>
-          <div><label for="c-auto">Share resolved by Jev + code (%)</label><input id="c-auto" type="number" value="80" min="0" max="100"></div>
-          <div><label for="c-front">Share sent to frontier model (%)</label><input id="c-front" type="number" value="15" min="0" max="100"></div>
-          <div><label for="c-fcost">Frontier cost per decision ($)</label><input id="c-fcost" type="number" value="0.02" min="0" step="0.001"></div>
+          <div><label for="c-auto">Share resolved by Jev + code (%)</label><input id="c-auto" type="number" value="85" min="0" max="100"></div>
+          <div><label for="c-front">Share sent to frontier model (%)</label><input id="c-front" type="number" value="14" min="0" max="100"></div>
+          <div><label for="c-fcost">Frontier cost per decision ($)</label><input id="c-fcost" type="number" value="0.03" min="0" step="0.001"></div>
           <div><label for="c-hcost">Human cost per decision ($)</label><input id="c-hcost" type="number" value="0.50" min="0" step="0.01"></div>
         </div>
         <div class="cbars" id="cbars"></div>
@@ -247,7 +247,11 @@
     const [st, sc] = await Promise.all([fetch("/api/status").then((r) => r.json()), fetch("/api/scenarios").then((r) => r.json())]);
     state.status = st; state.scenarios = sc.scenarios;
     setMode(st.mode, st.hasKey ? "" : "No API key configured on the server.");
-    renderNav(); select(state.scenarios[0].id); calc();
+    const qp = new URLSearchParams(location.search);
+    const want = state.scenarios.find((x) => x.id === qp.get("scenario"));
+    renderNav(); select(want ? want.id : state.scenarios[0].id); calc();
+    if (qp.get("input") === "paraphrase") $("#para").click();
+    if (qp.get("run") === "1") $("#run").click();
   }
 
   function setMode(mode, msg) {

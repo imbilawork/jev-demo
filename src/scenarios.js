@@ -7,7 +7,7 @@ export const scenarios = [
     id: "support-triage",
     title: "Support triage",
     tagline: "Route, prioritise and escalate a ticket in one call.",
-    value: "Three typed answers from one round trip. Your code branches on `route`, thresholds `urgency`, and gates on `escalate` without parsing a sentence.",
+    value: "Three typed answers from one round trip. Your code branches on route, thresholds urgency, and gates on escalate without parsing a sentence.",
     state: "Customer: I was charged twice and nobody has replied for 3 days. If this isn't fixed today I'm cancelling.",
     paraphrase: "Money left my account two times for one order and I have heard nothing since Friday. Honestly thinking about moving to your competitor.",
     questions: {
