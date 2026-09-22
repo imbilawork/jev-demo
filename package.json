@@ -1,0 +1,16 @@
+{
+  "name": "jev-demo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Demonstrator for Jev, the typed-decision model: dashboard, CLI and Cloudflare Worker proxy.",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "demo": "node --env-file=.env src/demo.js",
+    "demo:replay": "JEV_MODE=replay node --env-file=.env src/demo.js"
+  },
+  "devDependencies": {
+    "wrangler": "^4.136.2"
+  }
+}
